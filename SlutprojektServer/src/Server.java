@@ -9,7 +9,7 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) {
 
-        //Skapa JSON-objekt för 2 befintliga personer
+        //Skapa JSON-objekt för 4 befintliga personer
         int id = 0;
         JSONObject data = new JSONObject();
         data.put("ID: " + id++, createPerson("Åke", 78));

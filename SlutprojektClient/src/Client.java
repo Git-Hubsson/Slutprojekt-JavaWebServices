@@ -21,20 +21,21 @@ public class Client {
         BufferedWriter bWriter = null;
 
         try {
-            //Låter användaren knappa in URL och port
-            System.out.println("Ange URL");
+            //Låt användaren knappa in URL och port
+            System.out.println("För att ansluta till servern som hanterar persondata, vänligen ange \"localhost\" som URL och port 1337.\n");
+            System.out.println("Ange URL: ");
             Scanner scanner = new Scanner(System.in);
             String url = scanner.nextLine();
             System.out.println("Ange port");
             int port = scanner.nextInt();
             scanner.nextLine();
 
-            //Ansluter till servern
+            //Anslut till servern
             socket = new Socket(url, port);
             System.out.println("Ansluten till servern");
             System.out.println("");
 
-            //Sätter upp input oc output stream
+            //Sätt upp input och output stream
             inputSR = new InputStreamReader(socket.getInputStream());
             outputSW = new OutputStreamWriter(socket.getOutputStream());
             bReader = new BufferedReader(inputSR);
@@ -81,7 +82,7 @@ public class Client {
                     System.out.println(data);
                 }
 
-                //Avslutar programmet
+                //Avsluta programmet
                 if (menuChoice.equals("QUIT")) {
                     JSONObject request = new JSONObject();
                     request.put("ContentType", "application/json");
@@ -96,7 +97,7 @@ public class Client {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         } finally {
-            //Stänger av streams och socket när programmet avslutas
+            //Stäng av streams och socket när programmet avslutas
             try {
                 if (socket != null) socket.close();
                 if (inputSR != null) inputSR.close();

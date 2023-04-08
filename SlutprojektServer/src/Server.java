@@ -111,7 +111,7 @@ public class Server {
     //Lägg till emottagen information i data-filen
     static void saveData(JSONObject personData, JSONObject data, int id, BufferedWriter bWriter) throws IOException, ParseException {
         data.put("ID: " + id, personData);
-        clientOutput(bWriter, "Följande information har sparats: " + personData);
+        clientOutput(bWriter, "Följande information har sparats: " + "\"ID: " + id + "\"" + personData);
     }
 
     //Skapa ny person. Används primärt för att korta ner koden när servern skapar personer till data-filen

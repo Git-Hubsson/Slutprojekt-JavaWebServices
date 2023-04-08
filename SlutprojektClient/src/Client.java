@@ -22,7 +22,7 @@ public class Client {
 
         try {
             //Låt användaren knappa in URL och port
-            System.out.println("För att ansluta till servern som hanterar persondata, vänligen ange \"localhost\" som URL och port 1337.\n");
+            System.out.println("För att ansluta till servern som hanterar persondata, vänligen ange \"localhost\" som URL och port \"1337\".\n");
             System.out.println("Ange URL: ");
             Scanner scanner = new Scanner(System.in);
             String url = scanner.nextLine();
@@ -43,9 +43,9 @@ public class Client {
 
             while (true) {
                 //Fråga användaren vad som ska utföras
-                System.out.println("Skriv GET för att hämta information från systemet");
-                System.out.println("Skriv POST för att skicka ny information om en person till systemet");
-                System.out.println("Skriv QUIT för att avsluta");
+                System.out.println("1. Skriv \"GET\" för att hämta information från systemet");
+                System.out.println("2. Skriv \"POST\" för att skicka ny information om en person till systemet");
+                System.out.println("3. Skriv \"QUIT\" för att avsluta");
                 String menuChoice = scanner.nextLine().toUpperCase();
 
                 //Fråga vilken data användaren vill skicka
@@ -68,8 +68,8 @@ public class Client {
 
                 //Fråga vilken data användaren vill hämta
                 if (menuChoice.equals("GET")) {
-                    System.out.println("Skriv allt för att visa all data");
-                    System.out.println("Skriv in namnet på personen du vill hämta information om");
+                    System.out.println("1. Skriv \"allt\" för att visa all data");
+                    System.out.println("2. Skriv in namnet på personen du vill hämta information om");
                     String parameter = scanner.nextLine();
                     JSONObject request = new JSONObject();
                     request.put("ContentType", "application/json");

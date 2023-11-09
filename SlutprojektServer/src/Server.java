@@ -9,7 +9,7 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) {
 
-        //Skapa JSON-objekt för 4 befintliga personer
+        // Create JSON objects for 4 existing persons
         int id = 0;
         JSONObject data = new JSONObject();
         data.put("ID: " + id++, createPerson("Åke", 78));
@@ -17,7 +17,7 @@ public class Server {
         data.put("ID: " + id++, createPerson("John", 10));
         data.put("ID: " + id++, createPerson("Rodriguez", 22));
 
-        //Initiera serversocket, input/output streams och buffered reader/writer
+        // Initialize server socket, input/output streams, and buffered reader/writer
         ServerSocket serverSocket;
         Socket clientSocket;
         BufferedReader bReader;
@@ -26,21 +26,21 @@ public class Server {
         OutputStreamWriter outputSW;
         BufferedWriter bWriter;
 
-        //Starta servern
+        // Start the server
         try {
             serverSocket = new ServerSocket(1337);
-            System.out.println("Servern är nu igång");
+            System.out.println("Server is now running");
         } catch (IOException e) {
             System.out.println(e);
             return;
         }
 
         try {
-            //Vänta på att en klient ska ansluta och skriv ut klientens information
+            // Wait for a client to connect and print client information
             clientSocket = serverSocket.accept();
-            System.out.println("En klient har anslutit. " + clientSocket);
+            System.out.println("A client has connected. " + clientSocket);
 
-            //Skapa input/output streams och buffered reader/writer
+            // Create input/output streams and buffered reader/writer
             inputSR = new InputStreamReader(clientSocket.getInputStream());
             outputSW = new OutputStreamWriter(clientSocket.getOutputStream());
 
@@ -48,47 +48,47 @@ public class Server {
             bWriter = new BufferedWriter(outputSW);
 
             while (true) {
-                //Lyssna efter request, sedan parsa requesten och spara den som ett JSON-objekt
+                // Listen for a request, then parse the request and save it as a JSON object
                 JSONObject request = (JSONObject) new JSONParser().parse(bReader.readLine());
-                //Hämta variabler från request-objektet
-                System.out.println("Tog emot request: " + request);
+                // Retrieve variables from the request object
+                System.out.println("Received request: " + request);
                 String httpMethod = request.get("HTTPMethod").toString();
                 String contentType = request.get("ContentType").toString();
 
 
-                //Lägg till en ny person i JSON-objektet data
+                // Add a new person to the JSON object data
                 if (httpMethod.equals("POST") && contentType.equalsIgnoreCase("application/json")) {
                     JSONObject personData = (JSONObject) request.get("PersonData");
                     saveData(personData, data, id, bWriter);
                     id++;
                 }
 
-                //Hämta personinfo
+                // Retrieve person info
                 if (httpMethod.equals("GET") && contentType.equalsIgnoreCase("application/json")) {
                     String parameter = request.get("URLParameter").toString();
 
-                    if (parameter.equalsIgnoreCase("allt")) {
+                    if (parameter.equalsIgnoreCase("all")) {
                         clientOutput(bWriter, data);
-                        //Loopa igenom data-objektet och skicka personinfo till klienten som matchar sökningen
+                        // Loop through the data object and send person info to the client that matches the search
                     } else {
                         for (int i = 0; i < data.size(); i++) {
                             JSONObject persons = (JSONObject) data.get("ID: " + i);
-                            String namn = (String) persons.get("name");
-                            if (parameter.equalsIgnoreCase(namn)) {
+                            String name = (String) persons.get("name");
+                            if (parameter.equalsIgnoreCase(name)) {
                                 JSONObject person = new JSONObject();
                                 person.put("ID: " + i, persons);
                                 clientOutput(bWriter, person);
                                 break;
-                            } else if (i == data.size() - 1 && !parameter.equalsIgnoreCase(namn)) {
-                                clientOutput(bWriter, "Personen finns inte i registret");
+                            } else if (i == data.size() - 1 && !parameter.equalsIgnoreCase(name)) {
+                                clientOutput(bWriter, "Person not found in the register");
                             }
                         }
                     }
                 }
 
-                //Avslutar om klienten begär det
+                // Terminate if the client requests it
                 if (httpMethod.equalsIgnoreCase("quit")) {
-                    clientOutput(bWriter, "Servern avslutas");
+                    clientOutput(bWriter, "Server is shutting down");
                     break;
                 }
             }
@@ -104,17 +104,17 @@ public class Server {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         } finally {
-            System.out.println("Server Avslutas");
+            System.out.println("Server Shutting Down");
         }
     }
 
-    //Lägg till emottagen information i data-filen
+    // Add received information to the data file
     static void saveData(JSONObject personData, JSONObject data, int id, BufferedWriter bWriter) throws IOException, ParseException {
         data.put("ID: " + id, personData);
-        clientOutput(bWriter, "Följande information har sparats: " + "\"ID: " + id + "\"" + personData);
+        clientOutput(bWriter, "The following information has been saved: " + "\"ID: " + id + "\"" + personData);
     }
 
-    //Skapa ny person. Används primärt för att korta ner koden när servern skapar personer till data-filen
+    // Create a new person. Primarily used to shorten the code when the server creates people for the data file
     static JSONObject createPerson(String name, int age) {
         JSONObject person = new JSONObject();
         person.put("name", name);
@@ -122,7 +122,7 @@ public class Server {
         return person;
     }
 
-    //Skicka information till klienten
+    // Send information to the client
     static void clientOutput(BufferedWriter bWriter, JSONObject JSONObject) throws IOException {
         JSONObject response = new JSONObject();
         response.put("httpStatusCode", 200);

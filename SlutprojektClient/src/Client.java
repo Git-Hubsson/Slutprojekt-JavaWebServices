@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Client {
     public static void main(String[] args) throws IOException {
 
-        //Initiera sockets och streams
+        // Initialize sockets and streams
         Socket socket = null;
         InputStreamReader inputSR = null;
         OutputStreamWriter outputSW = null;
@@ -21,68 +21,68 @@ public class Client {
         BufferedWriter bWriter = null;
 
         try {
-            //Låt användaren knappa in URL och port
-            System.out.println("För att ansluta till servern som hanterar persondata, vänligen ange \"localhost\" som URL och port \"1337\".\n");
-            System.out.println("Ange URL: ");
+            // Allow the user to enter URL and port
+            System.out.println("To connect to the server handling personal data, please enter \"localhost\" as URL and port \"1337\".\n");
+            System.out.println("Enter URL: ");
             Scanner scanner = new Scanner(System.in);
             String url = scanner.nextLine();
-            System.out.println("Ange port");
+            System.out.println("Enter port: ");
             int port = scanner.nextInt();
             scanner.nextLine();
 
-            //Anslut till servern
+            // Connect to the server
             socket = new Socket(url, port);
-            System.out.println("Ansluten till servern");
+            System.out.println("Connected to the server");
             System.out.println("");
 
-            //Sätt upp input och output stream
+            // Set up input and output stream
             inputSR = new InputStreamReader(socket.getInputStream());
             outputSW = new OutputStreamWriter(socket.getOutputStream());
             bReader = new BufferedReader(inputSR);
             bWriter = new BufferedWriter(outputSW);
 
             while (true) {
-                //Fråga användaren vad som ska utföras
-                System.out.println("1. Skriv \"GET\" för att hämta information från systemet");
-                System.out.println("2. Skriv \"POST\" för att skicka ny information om en person till systemet");
-                System.out.println("3. Skriv \"QUIT\" för att avsluta");
+                // Ask the user what action to perform
+                System.out.println("1. Type \"GET\" to retrieve information from the system");
+                System.out.println("2. Type \"POST\" to send new information about a person to the system");
+                System.out.println("3. Type \"QUIT\" to exit");
                 String menuChoice = scanner.nextLine().toUpperCase();
 
-                //Fråga vilken data användaren vill skicka
+                // Ask which data the user wants to send
                 if (menuChoice.equals("POST")) {
                     JSONObject request = new JSONObject();
                     request.put("ContentType", "application/json");
                     request.put("HTTPMethod", "POST");
                     JSONObject person = new JSONObject();
-                    System.out.println("Namn: ");
+                    System.out.println("Name: ");
                     String name = scanner.nextLine();
                     person.put("name", name);
-                    System.out.println("Ålder: ");
+                    System.out.println("Age: ");
                     String age = scanner.nextLine();
                     person.put("age", age);
                     request.put("PersonData", person);
                     serverOutput(bWriter, request);
-                    //Skriver ut svaret från servern
+                    // Print the response from the server
                     System.out.println(bReader.readLine());
                 }
 
-                //Fråga vilken data användaren vill hämta
+                // Ask which data the user wants to retrieve
                 if (menuChoice.equals("GET")) {
-                    System.out.println("1. Skriv \"allt\" för att visa all data");
-                    System.out.println("2. Skriv in namnet på personen du vill hämta information om");
+                    System.out.println("1. Type \"all\" to show all data");
+                    System.out.println("2. Enter the name of the person you want to retrieve information about");
                     String parameter = scanner.nextLine();
                     JSONObject request = new JSONObject();
                     request.put("ContentType", "application/json");
                     request.put("HTTPMethod", "GET");
                     request.put("URLParameter", parameter);
                     serverOutput(bWriter, request);
-                    //Skriver ut svaret från servern
+                    // Print the response from the server
                     JSONObject response = (JSONObject) new JSONParser().parse(bReader.readLine());
                     JSONObject data = (JSONObject) response.get("Body");
                     System.out.println(data);
                 }
 
-                //Avsluta programmet
+                // Exit the program
                 if (menuChoice.equals("QUIT")) {
                     JSONObject request = new JSONObject();
                     request.put("ContentType", "application/json");
@@ -97,7 +97,7 @@ public class Client {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         } finally {
-            //Stäng av streams och socket när programmet avslutas
+            // Close streams and socket when the program ends
             try {
                 if (socket != null) socket.close();
                 if (inputSR != null) inputSR.close();
@@ -107,11 +107,11 @@ public class Client {
             } catch (Exception e) {
                 System.out.println(e);
             }
-            System.out.println("Client Avslutas");
+            System.out.println("Client Shutting Down");
         }
     }
 
-    //Skicka en request till servern
+    // Send a request to the server
     static void serverOutput (BufferedWriter bWriter, JSONObject JSONObject) throws IOException {
         bWriter.write(JSONObject.toJSONString());
         bWriter.newLine();
